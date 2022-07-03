@@ -1,3 +1,5 @@
+using HotelManager.API.Models;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +28,8 @@ try
         AllowAnyOrigin().
         AllowAnyMethod());
     });
-
+    builder.Services.AddDbContext < HotelManagerDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("HotelDbContext")));
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
