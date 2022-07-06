@@ -1,4 +1,5 @@
 using HotelManager.API.Models;
+using HotelManager.API.Profiles;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -30,6 +31,10 @@ try
     });
     builder.Services.AddDbContext < HotelManagerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HotelDbContext")));
+
+    //Add AutoMapper
+    builder.Services.AddAutoMapper(typeof(ProfileMapper));
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.

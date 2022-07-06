@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelManager.API.Models;
 using HotelManager.API.Models.Countries;
+using AutoMapper;
+using HotelManager.API.DTOs.Countries;
 
 namespace HotelManager.API.Controllers
 {
@@ -15,22 +17,26 @@ namespace HotelManager.API.Controllers
     public class CountriesController : ControllerBase
     {
         private readonly HotelManagerDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CountriesController(HotelManagerDbContext context)
+        public CountriesController(HotelManagerDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Countries
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
+        public async Task<ActionResult<IEnumerable<GetCountryDTO>>> GetCountries()
         {
           if (_context.Countries == null)
           {
               return NotFound();
           }
-            return await _context.Countries.ToListAsync();
+            var countries = await _context.Countries.ToListAsync();
+            var records = _mapper.Map<List<GetCountryDTO>>(countries);
+            return Ok(records);
         }
 
         // GET: api/Countries/5
@@ -88,12 +94,15 @@ namespace HotelManager.API.Controllers
 
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Country>> PostCountry(Country country)
+        public async Task<ActionResult<Country>> PostCountry(CreateCountryDTO createCountry)
         {
           if (_context.Countries == null)
           {
               return Problem("Entity set 'HotelManagerDbContext.Countries'  is null.");
           }
+
+            var country = _mapper.Map<Country>(createCountry);
+
             _context.Countries.Add(country);
             await _context.SaveChangesAsync();
 
