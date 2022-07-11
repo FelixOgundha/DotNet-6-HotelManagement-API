@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelManager.API.Models;
 using HotelManager.API.Models.Hotels;
+using HotelManager.API.DTOs.Hotels;
+using AutoMapper;
 
 namespace HotelManager.API.Controllers
 {
@@ -11,21 +13,25 @@ namespace HotelManager.API.Controllers
     public class HotelsController : ControllerBase
     {
         private readonly HotelManagerDbContext _context;
+        private readonly IMapper _mapper;
 
-        public HotelsController(HotelManagerDbContext context)
+        public HotelsController(HotelManagerDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Hotels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotels()
+        public async Task<ActionResult<IEnumerable<GetHotelsDTO>>> GetHotels()
         {
           if (_context.Hotels == null)
           {
               return NotFound();
           }
-            return await _context.Hotels.ToListAsync();
+           var hotels = await _context.Hotels.ToListAsync();
+           var result = _mapper.Map<List<GetHotelsDTO>>(hotels);
+            return Ok(result);
         }
 
         // GET: api/Hotels/5

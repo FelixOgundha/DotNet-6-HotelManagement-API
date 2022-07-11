@@ -2,10 +2,8 @@
 
 namespace HotelManager.API.DTOs.Countries
 {
-    public class CreateCountryDTO
+    public class CreateCountryDTO : BaseCountryDTO
     {
-        [Required]
-        public string Name { get; set; }
-        public string ShortName { get; set; }
+       
     }
 }
